@@ -4,6 +4,7 @@
 
 ; Chuỗi thông báo sẽ được in ra
 StartMessage DB 'Simple Calculator( + , - , * , / , % )',0AH, '$'
+NewLine DB 10, 13, '$' ; xuống dòng
 
 .CODE 
 ;****************************************************************MAIN
@@ -15,6 +16,11 @@ MOV DS,AX
 LEA DX,StartMessage 
 MOV AH,09H 
 INT 21H 
+
+; xuống dòng trước khi nhập
+LEA DX, NewLine
+MOV AH, 09h
+INT 21h
 
 CALL ReadBCD    ; đọc số thứ nhất vào BX, toán tử vào AL
 PUSH BX         ; lưu số vừa đọc
