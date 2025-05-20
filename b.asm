@@ -132,12 +132,12 @@ ReadBCD PROC
         JG ExitReadBCD
 
         SUB AL, '0'       ; AL = AL - '0' → chuyển về giá trị số, 48 là '0'
-        MOV CH, 0
-        MOV CL, AL
+        MOV CH, 0         ; phần cao CX = 0
+        MOV CL, AL        ; phần thấp CX bằng AL, để gán CX = AL
 
         MOV DX, 10        ; Nhân 10 để tạo hệ thập phân
-        MOV AX, BX
-        MUL DX            ; AX = BX * 10
+        MOV AX, BX        ; AX = BX để tính MUL
+        MUL DX            ; AX *= 10
         ADD AX, CX        ; Cộng chữ số mới
         MOV BX, AX        ; Lưu lại kết quả vào BX
 
