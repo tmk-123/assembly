@@ -4,7 +4,7 @@
 .DATA
 ; ----------------- Chuỗi thông báo -----------------
 StartMessage     DB 'NHOM 8 KTMT', 13, 10, 'MINI CALCULATOR( + , - , * , / , % )', 13, 10, '$'
-InstructionMsg   DB 13, 10, 13, 10, 'Nhap bieu thuc, viet lien khong cach, co dau bang "=" ', 13, 10, '$'
+InstructionMsg   DB 13, 10, 13, 10, 'Nhap bieu thuc, viet lien khong cach, co dau bang "=" :', 13, 10, '$'
 ContinueMsg      DB 'Ban co muon tinh tiep (y/n)? ', 13, 10, '$'
 NewLine          DB 10, 13, '$' ; Xuống dòng
 
@@ -12,7 +12,7 @@ NewLine          DB 10, 13, '$' ; Xuống dòng
 
 ; ============================ CHƯƠNG TRÌNH CHÍNH ============================
 MAIN PROC
-    MOV AX, @DATA       ; Tải địa chỉ của đoạn dữ liệu vào AX
+    MOV AX, @DATA       ; Tải địa chỉ của đoạn dữ liệu vào AX vì không thể tải trực tiếp hằng số vào DS
     MOV DS, AX          ; Gán AX vào DS để truy cập .DATA
 
     ; In lời chào đầu tiên
@@ -128,13 +128,12 @@ ReadBCD PROC
         CMP AL, '9'
         JG ExitReadBCD
 
-        SUB AL, '0'       ; AL = AL - '0' → chuyển về giá trị số, 48 là '0'
-        MOV CH, 0         ; phần cao CX = 0
+        SUB AL, '0'       ; AL = AL - '0' → chuyển về giá trị số
         MOV CL, AL        ; phần thấp CX bằng AL, để gán CX = AL
 
         MOV DX, 10        ; Nhân 10 để tạo hệ thập phân
         MOV AX, BX        ; AX = BX để tính MUL
-        MUL DX            ; AX *= 10
+        MUL DX            ; AX = AX * DX
         ADD AX, CX        ; Cộng chữ số mới
         MOV BX, AX        ; Lưu lại kết quả vào BX
 
@@ -158,12 +157,9 @@ PrintBin PROC
         CMP AX, 0
         JNE DivTo10         ; Nếu còn phần thương ≠ 0 → tiếp tục chia
         MOV CX, BX          ; CX lưu số chữ số
-        MOV SI, 0           ; SI = 0 → chưa gặp số khác 0
 
     Print:
         POP DX              ; Lấy chữ số (dư) từ stack ra (từ trái sang phải)
-        CMP SI, 0
-        JNE PrintDigit      ; Nếu đã gặp số khác 0, thì in luôn
         CMP DX, 0
         JNE PrintDigit      ; Nếu chữ số ≠ 0 thì in (bắt đầu in từ đây)
         CMP CX, 1           
@@ -172,7 +168,6 @@ PrintBin PROC
         JMP DonePrint       ; Khi in xong tất cả thì kết thúc
 
     PrintDigit:
-        MOV SI, 1           ; Đánh dấu đã gặp số khác 0
         ADD DL, '0'         ; Chuyển số sang mã ASCII (VD: 3 → '3')
         MOV AH, 2
         INT 21H             ; Gọi ngắt 21H để in ký tự trong DL
