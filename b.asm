@@ -3,7 +3,7 @@
 
 .DATA
 ; ----------------- Chuỗi thông báo -----------------
-StartMessage     DB 'Mini Calculator( + , - , * , / , % )', 13, 10, '$'
+StartMessage     DB 'Nhom 8 kien truc may tinh', 13, 10, 'Mini Calculator( + , - , * , / , % )', 13, 10, '$'
 InstructionMsg   DB 13, 10, 13, 10, 'Nhap bieu thuc, viet lien khong cach, co dau bang "=" ', 13, 10, '$'
 ContinueMsg      DB 'Ban co muon tinh tiep (y/n)? ', 13, 10, '$'
 NewLine          DB 10, 13, '$' ; Xuống dòng
@@ -56,8 +56,6 @@ StartCalc:
     MOV AH, 01H
     INT 21H
     CMP AL, 'y'
-    JE StartCalc
-    CMP AL, 'Y'
     JE StartCalc
 
     ; Kết thúc chương trình
@@ -120,8 +118,6 @@ Math ENDP
 ; Đọc số nguyên từ bàn phím (số thập phân), lưu vào BX
 ; Nhập xong khi gặp ký tự không phải '0'..'9'
 ReadBCD PROC
-    PUSH CX
-    PUSH DX
     MOV DX, 0         ; Bộ nhớ tạm
     MOV CX, 0
     MOV BX, 0         ; Kết quả cuối
@@ -131,11 +127,11 @@ Read:
     INT 21H           ; Đọc ký tự từ bàn phím vào AL
 
     CMP AL, '0'
-    JB ExitReadBCD
+    JL ExitReadBCD
     CMP AL, '9'
-    JA ExitReadBCD
+    JG ExitReadBCD
 
-    SUB AL, 30H       ; AL = AL - '0' → chuyển về giá trị số
+    SUB AL, '0'       ; AL = AL - '0' → chuyển về giá trị số, 48 là '0'
     MOV CH, 0
     MOV CL, AL
 
@@ -148,57 +144,45 @@ Read:
     JMP Read
 
 ExitReadBCD:
-    POP DX
-    POP CX
     RET
 ReadBCD ENDP
 
 ; ============================ IN SỐ ============================
 ; In giá trị thập phân trong AX, không in số 0 đầu
 PrintBin PROC
-    PUSH AX
-    PUSH CX
-    PUSH DX
-    PUSH SI
+    MOV CX, 5         ; In tối đa 5 chữ số (vì AX có tối đa 5 chữ số trong thập phân: 65535)
+    MOV SI, 10        ; Chia cho 10 để tách chữ số
+    MOV BX, 0         ; BX dùng để đếm số chữ số thực tế đã tách ra
 
-    MOV CX, 5         ; Giới hạn 5 chữ số
-    MOV SI, 10
-
-    MOV BX, 0
 DivTo10:
-    XOR DX, DX
-    DIV SI            ; AX / 10 → phần dư trong DX
-    PUSH DX           ; Lưu chữ số
-    INC BX
+    XOR DX, DX          ; Đảm bảo DX = 0 trước khi chia (vì DIV = DX:AX / SI)
+    DIV SI              ; AX / 10, thương lưu lại trong AX, dư trong DX (chính là 1 chữ số)
+    PUSH DX             ; Đẩy chữ số (phần dư) vào stack để in ngược lại sau
+    INC BX              ; Tăng đếm số chữ số
     CMP AX, 0
-    JNE DivTo10       ; Lặp lại nếu còn phần nguyên
-
+    JNE DivTo10         ; Nếu còn phần thương ≠ 0 → tiếp tục chia
     MOV CX, BX
-    MOV SI, 0         ; SI = 0 → chưa gặp số khác 0
+    MOV SI, 0           ; SI = 0 → chưa gặp số khác 0
 
 Print:
-    POP DX
+    POP DX              ; Lấy chữ số (dư) từ stack ra (từ trái sang phải)
     CMP SI, 0
-    JNE PrintDigit
+    JNE PrintDigit      ; Nếu đã gặp số khác 0, thì in luôn
     CMP DX, 0
-    JNE PrintDigit
-    CMP CX, 1
-    JE PrintDigit     ; Nếu là chữ số cuối, in luôn
-    LOOP Print
-    JMP DonePrint
+    JNE PrintDigit      ; Nếu chữ số ≠ 0 thì in (bắt đầu in từ đây)
+    CMP CX, 1           
+    JE PrintDigit       ; Nếu là chữ số cuối cùng, phải in (để in số 0)
+    LOOP Print          ; Nếu chưa đến cuối và DX = 0 → bỏ qua
+    JMP DonePrint       ; Khi in xong tất cả thì kết thúc
 
 PrintDigit:
-    MOV SI, 1
-    ADD DL, '0'
+    MOV SI, 1           ; Đánh dấu đã gặp số khác 0
+    ADD DL, '0'         ; Chuyển số sang mã ASCII (VD: 3 → '3')
     MOV AH, 02H
-    INT 21H
-    LOOP Print
+    INT 21H             ; Gọi ngắt 21H để in ký tự trong DL
+    LOOP Print          ; Tiếp tục in đến hết
 
 DonePrint:
-    POP SI
-    POP DX
-    POP CX
-    POP AX
     RET
 PrintBin ENDP
 
