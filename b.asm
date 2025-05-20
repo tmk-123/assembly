@@ -154,7 +154,7 @@ PrintBin PROC
     MOV BX, 0         ; BX dùng để đếm số chữ số thực tế đã tách ra
 
     DivTo10:
-        XOR DX, DX          ; Đảm bảo DX = 0 trước khi chia (vì DIV = DX:AX / SI)
+        MOV DX, 0           ; khởi tạo = 0
         DIV SI              ; AX / 10, thương lưu lại trong AX, dư trong DX (chính là 1 chữ số)
         PUSH DX             ; Đẩy chữ số (phần dư) vào stack để in ngược lại sau
         INC BX              ; Tăng đếm số chữ số
