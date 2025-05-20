@@ -13,17 +13,17 @@ NewLine          DB 10, 13, '$' ; Xuống dòng
 ; ============================ CHƯƠNG TRÌNH CHÍNH ============================
 MAIN PROC
     MOV AX, @DATA       ; Tải địa chỉ của đoạn dữ liệu vào AX
-    MOV DS, AX          ; Gán AX vào DS để truy cập biến .DATA
+    MOV DS, AX          ; Gán AX vào DS để truy cập .DATA
 
     ; In lời chào đầu tiên
     LEA DX, StartMessage
-    MOV AH, 09H
+    MOV AH, 9
     INT 21H
 
     StartCalc:
         ; In hướng dẫn nhập biểu thức
         LEA DX, InstructionMsg
-        MOV AH, 09H
+        MOV AH, 9
         INT 21H
 
         ; Nhập số thứ nhất và lưu vào BX, toán tử lưu vào AL
@@ -44,16 +44,16 @@ MAIN PROC
 
         ; Xuống dòng
         LEA DX, NewLine
-        MOV AH, 09H
+        MOV AH, 9
         INT 21H
 
         ; Hỏi tiếp tục
         LEA DX, ContinueMsg
-        MOV AH, 09H
+        MOV AH, 9
         INT 21H
 
         ; Nhập phím từ bàn phím
-        MOV AH, 01H
+        MOV AH, 1
         INT 21H
         CMP AL, 'y'
         JE StartCalc
@@ -118,12 +118,12 @@ Math ENDP
 ; Đọc số nguyên từ bàn phím (số thập phân), lưu vào BX
 ; Nhập xong khi gặp ký tự không phải '0'..'9'
 ReadBCD PROC
-    MOV DX, 0         ; Bộ nhớ tạm
+    MOV DX, 0         ; Khởi tạo bằng 0
     MOV CX, 0
     MOV BX, 0         ; Kết quả cuối
 
     Read:
-        MOV AH, 01H
+        MOV AH, 1
         INT 21H           ; Đọc ký tự từ bàn phím vào AL
 
         CMP AL, '0'
