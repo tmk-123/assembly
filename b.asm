@@ -3,7 +3,7 @@
 
 .DATA
 ; ----------------- Chuỗi thông báo -----------------
-StartMessage     DB 'Nhom 8 kien truc may tinh', 13, 10, 'Mini Calculator( + , - , * , / , % )', 13, 10, '$'
+StartMessage     DB 'NHOM 8 KTMT', 13, 10, 'MINI CALCULATOR( + , - , * , / , % )', 13, 10, '$'
 InstructionMsg   DB 13, 10, 13, 10, 'Nhap bieu thuc, viet lien khong cach, co dau bang "=" ', 13, 10, '$'
 ContinueMsg      DB 'Ban co muon tinh tiep (y/n)? ', 13, 10, '$'
 NewLine          DB 10, 13, '$' ; Xuống dòng
@@ -63,7 +63,7 @@ StartCalc:
     INT 21H
 MAIN ENDP
 
-; ============================ PHÉP TOÁN ============================
+; ============================ TÍNH TOÁN ============================
 ; Thực hiện phép toán giữa AX và BX, toán tử trong CL
 Math PROC
     PUSH DX
