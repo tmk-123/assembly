@@ -177,7 +177,7 @@ PrintBin PROC
     PrintDigit:
         MOV SI, 1           ; Đánh dấu đã gặp số khác 0
         ADD DL, '0'         ; Chuyển số sang mã ASCII (VD: 3 → '3')
-        MOV AH, 02H
+        MOV AH, 2
         INT 21H             ; Gọi ngắt 21H để in ký tự trong DL
         LOOP Print          ; Tiếp tục in đến hết
 
