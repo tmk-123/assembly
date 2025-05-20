@@ -66,9 +66,7 @@ MAIN ENDP
 ; ============================ TÍNH TOÁN ============================
 ; Thực hiện phép toán giữa AX và BX, toán tử trong CL
 Math PROC
-    PUSH DX
-
-    Operate:
+    CALC:
         CMP CL, '+'
         JE Plus
         CMP CL, '-'
@@ -110,7 +108,6 @@ Math PROC
         JMP ExitMath
 
     ExitMath:
-        POP DX
         RET
 Math ENDP
 
