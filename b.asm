@@ -150,7 +150,6 @@ ReadBCD ENDP
 ; ============================ IN SỐ ============================
 ; In giá trị thập phân trong AX, không in số 0 đầu
 PrintBin PROC
-    MOV CX, 5         ; In tối đa 5 chữ số (vì AX có tối đa 5 chữ số trong thập phân: 65535)
     MOV SI, 10        ; Chia cho 10 để tách chữ số
     MOV BX, 0         ; BX dùng để đếm số chữ số thực tế đã tách ra
 
@@ -161,7 +160,7 @@ PrintBin PROC
         INC BX              ; Tăng đếm số chữ số
         CMP AX, 0
         JNE DivTo10         ; Nếu còn phần thương ≠ 0 → tiếp tục chia
-        MOV CX, BX
+        MOV CX, BX          ; CX lưu số chữ số
         MOV SI, 0           ; SI = 0 → chưa gặp số khác 0
 
     Print:
